@@ -18,43 +18,50 @@ public class Invoice {
 
     public Invoice(Customer c, String month, double[][] usage, double[][] power_prices) {
 
-        this.customer = c;
+        this.c = c;
         this.month = month;
         this.usage = usage;
-        this.power_prices = prices;
+        this.prices = power_prices;
         this.amount = 0;
 
     }
 
     public void computeAmount() {
 
-        PowerAgreementType agreement = c.getAgreement();
-        for(int i = 0; i < usage.length; i++){
-            for(int j = 0; j < usage[i].length; j++){
-                double u = usage[i][j];
-                double p = power_prices[i][j];
-                double priceToUse = 0;
+        double total = 0;
 
-                switch(agreement){
-                    case SPOTPRICE:
-                        priceToUse = p;
-                        break;
-                    case NORGESPRICE:
-                        priceToUse = Power.NORGESPRICE_KWH;
-                        break;
-                    case
+        switch (c.getAgreement()) {
+            case SPOTPRICE:
+                total = MonthlyPower.computeSpotPrice(usage, prices);
+                break;
 
-                }
+            case POWERSUPPORT:
+                total = MonthlyPower.computeSpotPrice(usage, prices)
+                        - MonthlyPower.computePowerSupport(usage, prices);
+                break;
 
-            }
-
+            case NORGESPRICE:
+                total = MonthlyPower.computeNorgesPrice(usage);
+                break;
         }
+
+        this.amount = total;
 
     }
 
     public void printInvoice() {
 
-        // TODO
+        System.out.println("Customer number "+c.getCustomerId());
+        System.out.println("Name "+c.getName());
+        System.out.println("Email+ "+c.getEmail());
+        System.out.println("Agreemenr "+c.getAgreement());
+        System.out.println();
+        System.out.println("Month "+ month);
+
+        double totalUsage = MonthlyPower.computePowerUsage(usage);
+        System.out.printf("Usage:%12.2f kWh%n", totalUsage);
+        System.out.printf("Amount:%11.2f NOK%n", amount);
+
 
     }
 }

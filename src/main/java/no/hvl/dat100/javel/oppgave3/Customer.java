@@ -15,15 +15,17 @@ public class Customer {
         this.agreement = agreement;
 
     }
+    public int getCustomerId(){
+        return customer_id;
+    }
+
     public String getName(){
         return name;
     }
     public String getEmail(){
         return email;
     }
-    public int getCustomerId(){
-        return customer_id;
-    }
+
     public PowerAgreementType getAgreement(){
         return agreement;
     }
